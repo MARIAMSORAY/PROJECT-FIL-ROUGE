@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SOCket — Connexion</title>
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+  <div class="login-screen">
+    <div class="login-card">
+      <p class="brand">SOCket</p>
+      <h1>Console SOC</h1>
+
+      <form id="login-form" autocomplete="off">
+        <div class="field">
+          <label for="username">Identifiant</label>
+          <input type="text" id="username" name="username" required autofocus />
+        </div>
+        <div class="field">
+          <label for="password">Mot de passe</label>
+          <input type="password" id="password" name="password" required />
+        </div>
+        <button type="submit" class="btn">Se connecter</button>
+        <p class="error-msg" id="error-msg"></p>
+      </form>
+
+      <p class="hint">
+        Comptes de démonstration (après <code>npm run seed</code>) :<br />
+        admin / Admin#2026!<br />
+        analyste1 / Analyste#2026!<br />
+        lecteur1 / Lecteur#2026!
+      </p>
+    </div>
+  </div>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/login.js"></script>
+</body>
+</html>

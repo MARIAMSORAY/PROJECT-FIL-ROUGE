@@ -1,0 +1,62 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: socket_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: socket_user
+      POSTGRES_PASSWORD: changeme
+      POSTGRES_DB: socket_db
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./backend/sql/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U socket_user -d socket_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  mongo:
+    image: mongo:7
+    container_name: socket_mongo
+    restart: unless-stopped
+    volumes:
+      - mongodata:/data/db
+    ports:
+      - "27017:27017"
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    container_name: socket_backend
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      mongo:
+        condition: service_healthy
+    environment:
+      PORT: 3000
+      JWT_SECRET: change_this_to_a_long_random_string
+      PG_HOST: postgres
+      PG_PORT: 5432
+      PG_USER: socket_user
+      PG_PASSWORD: changeme
+      PG_DATABASE: socket_db
+      MONGO_URI: mongodb://mongo:27017
+      MONGO_DB: socket_logs
+      CORS_ORIGIN: "*"
+    ports:
+      - "3000:3000"
+
+volumes:
+  pgdata:
+  mongodata:
